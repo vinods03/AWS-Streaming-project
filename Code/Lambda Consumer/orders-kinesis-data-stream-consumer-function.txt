@@ -1,0 +1,58 @@
+import json
+import boto3
+import base64
+import ast
+
+dynamodb_resource = boto3.resource('dynamodb')
+orders_table = dynamodb_resource.Table('orders')
+
+items_to_add = []
+
+def lambda_handler(event, context):
+    
+    # print('The event is ', event)
+    
+    for record in event['Records']:
+        
+        # without the usage of json.loads, the type of record_data was string and not dict
+        # ast.literal_eval can be used as well but better to avoid 3rd party libraries
+        # record_data = ast.literal_eval(base64.b64decode(record['kinesis']['data']).decode('utf-8'))
+        
+        record_data = json.loads(base64.b64decode(record['kinesis']['data']).decode('utf-8'))
+        print('record_data is ', record_data)
+        print('type of record_data is ', type(record_data))
+        
+        order_id = record_data['order_id']
+        customer_id = record_data['customer_id']
+        seller_id = record_data['seller_id']
+        products = record_data['products']
+        
+        # print('order_id is ', order_id)
+        # print('customer_id is ', customer_id)
+        # print('seller_id is ', seller_id)
+        # print('products are ', products)
+        
+        item = {'order_id': order_id, 'customer_id': customer_id, 'seller_id': seller_id}
+        
+        for i in range(0, len(products)):
+           
+            item['product_code_'+str(i)] = products[i]['product_code']
+            item['product_name_'+str(i)] = products[i]['product_name']
+            item['product_price_'+str(i)] = products[i]['product_price']
+            item['product_qty_'+str(i)] = products[i]['product_qty']
+            
+            
+        items_to_add.append(item)
+        
+    print('Records to be inserted into dynamodb are ', items_to_add)
+    
+    
+    try:
+        with orders_table.batch_writer() as batch:
+            for item in items_to_add:
+                batch.put_item(Item = item)
+                print('Successfully wrote order with order_id ', item['order_id'], ' into the dynamodb orders table')
+    except Exception as e:
+        print('Dynamodb load failed with exception ', e)
+    
+   
