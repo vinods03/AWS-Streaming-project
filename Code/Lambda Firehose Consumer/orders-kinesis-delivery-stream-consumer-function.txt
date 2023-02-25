@@ -1,0 +1,35 @@
+import json
+import boto3
+import time
+
+glue_client = boto3.client('glue')
+crawler_name = 'kinesis_orders_crawler'
+
+def lambda_handler(event, context):
+    
+    print('The status of the glue crawler at the beginning is ', glue_client.get_crawler(Name = crawler_name)['Crawler']['State'])
+    
+    if glue_client.get_crawler(Name = crawler_name)['Crawler']['State'] == 'READY':
+    
+        try:
+            
+            glue_client.start_crawler(Name = crawler_name)
+            print('Glue crawler ', crawler_name, ' started successfully')
+            
+            crawler_status = glue_client.get_crawler(Name = crawler_name)['Crawler']['State']
+            print('The status of the crawler now is ', crawler_status)
+            
+            while (glue_client.get_crawler(Name = crawler_name)['Crawler']['State'] != 'READY'):
+                print('The status of the crawler now is ', crawler_status)
+                time.sleep(15)
+                
+            print('The status of the crawler now is ', crawler_status)
+            
+        except Exception as e:
+            
+            print('Issue with glue crawler. The exception is ', e)
+            
+    else:
+        
+        print('The crawler ', crawler_name, ' is not in READY state.')
+        
