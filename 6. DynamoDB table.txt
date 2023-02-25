@@ -1,0 +1,10 @@
+DynamoDB table 'orders' with partition key as order_id is created.
+This is where we store the orders published by the producer application.
+
+Note how dynamic schema is written into DynamoDB.
+One order can have 2 products, another can have 5 products and so on.
+Lambda will write in a way that the dynamodb table will have 2 columns where order has 2 products and 5 columns where the order has 5 products and so on.
+Each product in our example has 4 attributes. So 2 columns translate to 2 * 4 = 8 columns and 5 columns translate to 5 * 4 = 20 columns and so on.
+
+We use batch write into dynamodb for increased throughput.
+This is the consumer-side equivalent of kinesis.put_records that we used on the producer-side.
