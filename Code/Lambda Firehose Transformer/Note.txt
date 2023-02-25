@@ -1,0 +1,5 @@
+Note that there are important limitations when using lambda transformer on kinesis data firehose.
+You cannot output multiple records with same record id -> you will get "DuplicatedRecordId" related error.
+You also cannot change the recordId -> you will getting "MissingRecordId" related error.
+
+So, in our example, if you wanted to split each order into multiple rows depending on the number of products (by modifying record id with an append of iterator value), that would not be possible. You need to maintain the same granularity as the incoming record i.e. one record per order-id.

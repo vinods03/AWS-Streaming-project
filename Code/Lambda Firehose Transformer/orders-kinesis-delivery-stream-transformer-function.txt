@@ -1,0 +1,39 @@
+import json
+import base64
+
+def lambda_handler(event, context):
+    
+    full_output_data = []
+    
+    for record in event['records']:
+        
+        incoming_data = json.loads(base64.b64decode(record['data']).decode('utf-8'))
+        
+        # print('The incoming data is ', incoming_data)
+        # print('Type of incoming data is ', type(incoming_data))
+        
+        order_id = incoming_data['order_id']
+        customer_id = incoming_data['customer_id']
+        seller_id = incoming_data['seller_id']
+        
+        total_order_value = 0
+        
+        for i in range(0, len(incoming_data['products'])):
+            
+            product_price = incoming_data['products'][i]['product_price']
+            product_qty = incoming_data['products'][i]['product_qty']
+            total_order_value = total_order_value + (product_price * product_qty)
+            
+        item = {'order_id': order_id, 'customer_id': customer_id, 'seller_id': seller_id, 'total_order_value': total_order_value}
+                
+        output_record = {
+                    'recordId': record['recordId'],
+                    'result': 'Ok',
+                    'data': base64.b64encode(json.dumps(item).encode('utf-8'))
+                    }
+                    
+        full_output_data.append(output_record)
+                    
+    return {'records': full_output_data}
+        
+    
