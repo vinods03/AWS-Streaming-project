@@ -1,0 +1,4 @@
+Make sure ordering is maintained at a shard level for records published into kinesis data stream.
+Refer Code\1. Producer\2. Publish individual records with guaranteed ordering for the code.
+
+Note how the data dictionary compatible for inserting into kinesis is created first and then the sequence number is updated in the dict.

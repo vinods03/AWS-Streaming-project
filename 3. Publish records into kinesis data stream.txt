@@ -1,0 +1,7 @@
+Refer Code\1. Producer\1. Publish individual records
+Navigate to the above folder in Visual Studio Code.
+Open Terminal.
+Run the command python main.py orders
+
+If you get an error related to boto3 module not found, execute below command:
+python -m pip install boto3

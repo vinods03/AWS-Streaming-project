@@ -1,0 +1,4 @@
+Once Glue Crawler completes, you can query the S3 data using Athena.
+You can also cross-check the results between DynamoDB and Athena.
+Note that DynamoDB has the details of every product in an order whereas Athena consolidates the data to order level.
+The sum of (product price * product qty) in DynamoDB for a product must be equal to total_order_value in Athena.

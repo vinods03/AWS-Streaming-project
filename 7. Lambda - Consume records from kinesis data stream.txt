@@ -1,0 +1,2 @@
+Refer Code\2. Lambda Consumer for the consumer code.
+Setup a Kinesis trigger on the "orders" kinesis data stream into which the python producer code is publishing data.

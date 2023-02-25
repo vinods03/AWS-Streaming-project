@@ -1,0 +1,7 @@
+For better throughput, use the put_records api instead of the put-record api.
+Refer Code\1. Producer\3. Publish records in batches
+
+Checkout how the dict is created for each order.
+Then we make a list of dicts and then use this list in the put_records api.
+
+Also checkout how we are able to capture and handle individual message level responses / errors even when writing into kinesis in bulk.

@@ -1,0 +1,12 @@
+Use the below command to register a consumer (orders-consumer-1) with the kinesis data stream:
+aws kinesis register-stream-consumer --stream-arn arn:aws:kinesis:us-east-1:100163808729:stream/orders --consumer-name orders-consumer-1
+
+Then, change the trigger of the lambda function to the stream + consumer instead of stream alone, as was the case earlier.
+
+When you use this operation, the consumer you register can then call SubscribeToShard to receive data from the stream using enhanced fan-out, at a rate of up to 2 MiB per second for every shard you subscribe to. This rate is unaffected by the total number of consumers that read from the same stream.
+You can register up to 20 consumers per stream. A given consumer can only be registered with one stream at a time.
+
+Basically, you can create another consumer (orders-consumer-2), register it with the kinesis data stream and have another lambda process data from the same stream and do something else.
+The rate of 2 MiB per second remains the same for both the consumers / lambda functions.
+
+There is no change in the code needed to activate enhanced fan-out.

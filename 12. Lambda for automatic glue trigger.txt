@@ -1,0 +1,4 @@
+Create a Lambda with the SQS queue created in the previous step as the Trigger.
+This Lambda will trigger Glue Crawler on the S3 bucket whenever transformed orders are delivered in the bucket.
+
+Refer Code\4. Lambda Firehose Consumer for the code.

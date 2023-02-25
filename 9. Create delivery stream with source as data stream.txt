@@ -1,0 +1,21 @@
+Create a kinesis delivery stream (orders-delivery-stream) with source as the kinesis data stream "orders".
+
+Create a lambda function "orders-kinesis-delivery-stream-consumer-function" - this is just a basic function now with no code yet.
+Attach this function to the kinesis data firehose in the "Transform source records with lambda" section. 
+You can set the lambda buffer size and buffer interval - which indicate the size / time for which the kinesis data firehose buffers, before invoking the lambda.
+I chose 1 MB and 60 seconds.
+
+Did not enable record format conversion (to Parquet / ORC) now.
+
+I enabled "Dynamic Partitioning".
+"Multi-record deaggregation" was disabled.
+"New line delimiter" was disabled.
+"Inline parsing for JSON" was enabled and the Dynamic Partitioning key was set as order_id with JQ expression as .order_id.
+I set the S3 bucket prefix as "orders/order_id=!{partitionKeyFromQuery:order_id}".
+Now each order was delivered as a separate file in S3 bucket.
+When the Glue Crawler is run and query is run on Athena, we are able to see each order as a separate line item.
+Without this setup, the orders were getting aggregated in S3 bucket i.e. multiple orders were delivered in a single file and when glue crawler was run, only the first record/order from each of the files was visible in Athena.
+
+Set the S3 target bucket (vinod-streaming-project-bucket). 
+You can set the S3 buffer size and buffer interval - which indicate the size / time for which the kinesis data firehose buffers, before delivering to S3.
+I chose 128 MB and 60 sec. You can set the S3 bucket prefix and S3 bucket error predix as orders/ and order-errors/.

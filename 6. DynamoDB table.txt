@@ -1,0 +1,2 @@
+DynamoDB table 'orders' with partition key as order_id is created.
+This is where we store the orders published by the producer application.

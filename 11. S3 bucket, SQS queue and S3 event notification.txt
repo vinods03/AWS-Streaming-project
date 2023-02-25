@@ -1,0 +1,29 @@
+Create an S3 bucket that will hold the data delivered by kinesis delivery stream.
+Create an SQS queue with access policy configured to get event notifications from the S3 bucket.
+Create event notification on the S3 bucket with destination as the above SQS queue.
+
+This is the access policy on the SQS queue:
+
+{
+  "Version": "2012-10-17",
+  "Id": "123",
+  "Statement": [
+    {
+      "Sid": "456",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "s3.amazonaws.com"
+      },
+      "Action": "SQS:SendMessage",
+      "Resource": "arn:aws:sqs:us-east-1:100163808729:kinesis-firehose-orders-queue",
+      "Condition": {
+        "StringEquals": {
+          "aws:SourceAccount": "100163808729"
+        },
+        "ArnLike": {
+          "aws:SourceArn": "arn:aws:s3:*:*:vinod-streaming-project-bucket*"
+        }
+      }
+    }
+  ]
+}
